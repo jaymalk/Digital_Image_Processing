@@ -1,0 +1,8 @@
+# Mac DS_Store
+*.DS_Store*
+
+# Compiled files and cache
+*.o*
+*.out.*
+*__pycache__*
+
