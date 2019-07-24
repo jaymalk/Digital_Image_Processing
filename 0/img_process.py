@@ -29,9 +29,12 @@ def set_parser():
 def process(img):
     img = np.array(img, dtype=np.uint64)
     # Slow, single line solution
-    for i in range(len(img)):
-        img[i] = [(img[i].sum(axis=0)//len(img[i])) for _ in range(len(img[i]))]
-    return img
+    new_img = []
+    row_len = len(img[0])
+    for row in img:
+        avg = row.sum(axis=0)/row_len
+        new_img.append([avg for _ in np.arange(row_len)])
+    return np.array(new_img)
 
 
 # Main
