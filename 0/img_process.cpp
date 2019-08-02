@@ -53,6 +53,7 @@ int main(int argc, char** argv) {
     catch(const std::runtime_error& e) {
         // Image doesn't exist
         std::cerr << e.what();
+        exit(1);
     } 
     catch(...) {
         // Unknown error in reading (exit code 1)
