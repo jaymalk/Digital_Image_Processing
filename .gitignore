@@ -3,7 +3,7 @@
 
 # Compiled files and cache
 *.o*
-*.out.*
+*.out*
 *__pycache__*
 
 # VSCode
@@ -11,3 +11,6 @@
 
 # Practice
 *Practice*
+
+# Specific images
+*__ign.jpg
