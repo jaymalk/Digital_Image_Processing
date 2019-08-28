@@ -250,7 +250,7 @@ void global_histogram_equilisation(cv::Mat& _img, cv::Mat& _new_img, int* _map =
  * @param _img : original image (BGR)
  * @param _lum : luminance matrix (to be created)
  */
-void get_luminance(cv::Mat& _img, cv::Mat& _lum) {
+void get_luminance(cv::Mat& _img, cv::Mat& _lum, bool log_=false) {
     try {
         _lum = cv::Mat(_img.size(), CV_8UC1);
         for(int i=0; i<_img.size().width; i++)
@@ -259,6 +259,14 @@ void get_luminance(cv::Mat& _img, cv::Mat& _lum) {
                 float l = 0.2990f*static_cast<float>(v[2]) + 0.5870f*static_cast<float>(v[1]) + 0.1140f*static_cast<float>(v[0]);
                 _lum.at<uchar>(j, i) = static_cast<uchar>(l);
             }
+        if (log_){
+            _lum = cv::max(_lum, 1);
+            _lum.convertTo(_lum, CV_32F);
+            cv::log(_lum, _lum);
+            _lum /= log(255);
+            _lum *= 255;
+            _lum.convertTo(_lum, CV_8UC1);
+        }
     }
     catch(const std::runtime_error& e) {
         // Exception
@@ -274,8 +282,14 @@ void get_luminance(cv::Mat& _img, cv::Mat& _lum) {
  * @param _img : original image
  * @param _lum : new luminance map
  */
-void change_luminance(cv::Mat& _img, cv::Mat& _lum, float gm = 0.4) {
+void change_luminance(cv::Mat& _img, cv::Mat& _lum, float gm = 0.4, bool _log=false) {
     try {
+        if(_log) {
+            _lum.convertTo(_lum, CV_32F);
+            _lum = (_lum/255)*log(255);
+            cv::exp(_lum, _lum);
+            _lum.convertTo(_lum, CV_8UC1);
+        }
         for(int i=0; i<_img.size().width; i++)
             for(int j=0; j<_img.size().height; j++) {
                 float _nl = static_cast<float>(_lum.at<uchar>(j, i));
@@ -353,6 +367,10 @@ void show_image(cv::Mat& _img, std::string _name = "Image") {
 
 
 int main(int argc, const char** argv) {
+    // DOMAIN - LOG or LINEAR
+    bool dom;
+    std::cout << "Domain? [1 -> log / 0 -> linear] : ";
+    std::cin >> dom;
     // String holders
     std::string rdpth, svpth, prc;
     float gmv1, gmv2;
@@ -448,7 +466,7 @@ int main(int argc, const char** argv) {
     // Showing image
     show_image(img);
     // Creating Luminousity Matrix
-    get_luminance(img, lum);
+    get_luminance(img, lum, dom);
     // Showing Luminance
     show_image(lum);
 
@@ -510,9 +528,9 @@ int main(int argc, const char** argv) {
     show_image(new_lum);
     // Applying new luminance to image
     if(gm2)
-        change_luminance(img, new_lum, gmv2);
+        change_luminance(img, new_lum, gmv2, dom);
     else
-        change_luminance(img, new_lum);
+        change_luminance(img, new_lum, 0.4, dom);
     // Showing new image
     show_image(img);
     // Saving image
