@@ -65,21 +65,22 @@ def getV(_img, s, a, phi):
 def reinhard_map(_img, best_only = False):
     def lum_map(_img, _ol, _nl):
         _ni = np.zeros(_img.shape)
-        _ni[:,:,0] = _img[:,:,0]*((_nl/(_ol+0.0001))**1.0)
-        _ni[:,:,1] = _img[:,:,1]*((_nl/(_ol+0.0001))**1.0)
-        _ni[:,:,2] = _img[:,:,2]*((_nl/(_ol+0.0001))**1.0)
-        return gamma_crr(_ni)
+        _ni[:,:,0] = _img[:,:,0]*((_nl/(_ol+0.0001))**0.75)
+        _ni[:,:,1] = _img[:,:,1]*((_nl/(_ol+0.0001))**0.75)
+        _ni[:,:,2] = _img[:,:,2]*((_nl/(_ol+0.0001))**0.75)
+        return _ni
+    _img = gamma_crr(_img)
     al1 = 1/(2*(2**0.5))
     _lum = scale(_img[:,:,0]*0.299 + _img[:,:,1]*0.587 + _img[:,:,0]*0.114, 255)
-    phi = 5
-    a = 0.36
+    phi = 10
+    a = 0.72
     _x = []
     _s = []
     for s in np.arange(0.1, 10, 0.1):
         _V = getV(_lum, s, a, phi)
         V1 = abs(apply_gaussian_filter(_lum, al1*s))
         _ld = _lum/(1+V1)
-        best = scale(gamma_crr(lum_map(_img, _lum, _ld)), 255)
+        best = scale(lum_map(_img, _lum, _ld), 255)
         if not best_only:
             write('./imgs/v1_'+str(round(s, 2))+'.jpg', best)
         if((best_only) and (_V.sum() < 0.5)): break
