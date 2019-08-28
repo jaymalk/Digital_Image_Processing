@@ -65,8 +65,7 @@ def log_lum(img : np.array, base : int = 2, bmx : float = 3, bmn : float = 1, al
         # Scaling in log-domain
         log_lum = scale(log_lum, bmx, bmn)
         # Getting out of log-domain
-        new_lum = np.power(base, log_lum) - _delta
-        new_lum = scale(new_lum, 255, 1)
+        new_lum = np.power(base, log_lum/(np.log(255)/np.log(base)))*255
         # Getting new RGB components 
         imgr = new_lum*((imgr/(lum+_delta))**al) 
         imgb = new_lum*((imgb/(lum+_delta))**al) 
@@ -89,8 +88,7 @@ if __name__ == '__main__':
         write('img_middle__ign.jpg', scale(img, 4000, 0)) # Middle fitting (decent)
         write('img_min__ign.jpg', scale(img, 10000, 0)) # Fitting lower values (higher are lost)
         # Log Scaling with various parameters
-        write('log_set1__ign.jpg', log_lum(gamma_crr(img, 2.2), base=2, bmn=1, bmx=3, al=0.45)) # Setting - 1 (Default)
-        write('log_set2__ign.jpg', log_lum(img, base=10, bmn=0.1, bmx=1.4, al=0.9)) # Setting - 2
-        write('log_set3__ign.jpg', log_lum(gamma_crr(img, 2.2), base=2, bmn=0.5, bmx=4.5, al=0.45)) # Setting - 3
+        write('log_base_3.jpg', log_lum(img, base=3, bmn=1, bmx=6, al=0.8)) # Another base
+        write('log_base_10.jpg', log_lum(img, base=10, bmn=0.1, bmx=2.1, al=0.8)) # (Default)
     except:
         trace()

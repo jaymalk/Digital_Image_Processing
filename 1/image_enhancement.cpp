@@ -286,7 +286,10 @@ void change_luminance(cv::Mat& _img, cv::Mat& _lum, float gm = 0.4, bool _log=fa
     try {
         if(_log) {
             _lum.convertTo(_lum, CV_32F);
-            _lum = (_lum/255)*log(255);
+            double *mx = new double;
+            cv::minMaxLoc(_lum, NULL, mx);
+            _lum /= (*mx);
+            _lum *= log(255);
             cv::exp(_lum, _lum);
             _lum.convertTo(_lum, CV_8UC1);
         }
