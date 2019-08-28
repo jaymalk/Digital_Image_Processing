@@ -212,7 +212,7 @@ void CDF_map(cv::Mat& img, int* _map) {
  * @param _map : mapping array pointer, will be updated
  * @param gamma : the correction value (0 < () < 4)
  */
-void gamma_correction_map(int * _map, float gamma) {
+void gamma_correction_map(int * _map, float gamma = 1/2.2) {
     if(gamma <= 0 || gamma > 4)
         throw new std::runtime_error("Error, gamma must be in the range (0, 4]. [gamma_correction_map]");
     float max = pow(255, gamma);
@@ -279,11 +279,14 @@ void change_luminance(cv::Mat& _img, cv::Mat& _lum, float gm = 0.4) {
         for(int i=0; i<_img.size().width; i++)
             for(int j=0; j<_img.size().height; j++) {
                 float _nl = static_cast<float>(_lum.at<uchar>(j, i));
-                cv::Vec3b& v = _img.at<cv::Vec3b>(j, i);
+                cv::Vec3b v = _img.at<cv::Vec3b>(j, i);
                 float _ol = 0.2990f*static_cast<float>(v[2]) + 0.5870f*static_cast<float>(v[1]) + 0.1140f*static_cast<float>(v[0]);
-                v[0] = std::min((uchar)255, static_cast<uchar>(static_cast<float>(v[0]) * pow((_nl/_ol), gm)));
-                v[1] = std::min((uchar)255, static_cast<uchar>(static_cast<float>(v[1]) * pow((_nl/_ol), gm)));
-                v[2] = std::min((uchar)255, static_cast<uchar>(static_cast<float>(v[2]) * pow((_nl/_ol), gm)));
+                v[0] = static_cast<uchar>(std::min(254.0f, static_cast<float>(1+v[0]) * pow(_nl/_ol , gm)));
+                v[1] = static_cast<uchar>(std::min(254.0f, static_cast<float>(1+v[1]) * pow(_nl/_ol , gm)));
+                v[2] = static_cast<uchar>(std::min(254.0f, static_cast<float>(1+v[2]) * pow(_nl/_ol , gm)));
+                cv::Vec3b _df = v - _img.at<cv::Vec3b>(j, i);
+                if(_df[0] < 100 && _df[1] < 100 && _df[2] < 100)
+                    _img.at<cv::Vec3b>(j, i) = v;
             }
     }
     catch(const std::runtime_error& e) {
@@ -350,10 +353,98 @@ void show_image(cv::Mat& _img, std::string _name = "Image") {
 
 
 int main(int argc, const char** argv) {
+    // String holders
+    std::string rdpth, svpth, prc;
+    float gmv1, gmv2;
+    bool gm1=false, gm2=false;
+    // Assigning parameters
+    switch(argc) {
+        case 1: {
+            // Nothing is entered
+            std::cout << "Enter image path : ";
+            std::cin >> rdpth;
+            std::cout << "Enter save path : ";
+            std::cin >> svpth;
+            std::cout << "Enter the process (hist-eq, avg, boost, sbl, pwt) : ";
+            std::cin >> prc;
+            break;
+        }
+        case 2: {
+            rdpth = argv[1];
+            std::cout << "Enter save path : ";
+            std::cin >> svpth;
+            std::cout << "Enter the process (hist-eq, avg, boost, sbl, pwt) : ";
+            std::cin >> prc;
+            break;
+        }
+        case 3: {
+            rdpth = argv[1];
+            svpth = argv[2];
+            std::cout << "Enter the process (hist-eq, avg, boost, sbl, pwt) : ";
+            std::cin >> prc;
+            break;
+        }
+        case 4: {
+            rdpth = argv[1];
+            svpth = argv[2];
+            prc = argv[3];
+            break;
+        }
+        case 5: {
+            rdpth = argv[1];
+            svpth = argv[2];
+            prc = argv[3];
+            if(prc[0] == 'g') {
+                gm1 = true;
+                try {
+                    gmv1 = std::stof(argv[4]);
+                }
+                catch(...) {
+                    std::cerr << "Error while reading [gmv1]\nExiting...\n";
+                    exit(1);
+                }
+            }
+            else {
+                gm2 = true;
+                try {
+                    gmv2 = std::stof(argv[4]);
+                }
+                catch(...) {
+                    std::cerr << "Error while reading [gmv2]\nExiting...\n";
+                    exit(1);
+                }
+            }
+            break;
+        }
+        case 6: {
+            if(argv[3][0] != 'g') {
+                std::cerr << "5 Inputs only for Gamma\nExiting...\n";
+                exit(1);
+            }
+            rdpth = argv[1];
+            svpth = argv[2];
+            prc = argv[3];
+            gm1 = true;
+            gm2 = true;
+            try {
+                    gmv1 = std::stof(argv[4]);
+                    gmv2 = std::stof(argv[5]);
+            }
+            catch(...) {
+                std::cerr << "Error while reading [gmv1 or gmv2]\nExiting...\n";
+                exit(1);
+            }
+            break;
+        }
+        default: {
+            std::cerr << "Invalid CL Inputs. [Max 5]\nExiting...\n";
+            exit(1);
+        }
+    }
     // Containers
     cv::Mat img, lum, new_lum, filter;
     // Loading image
-    load_image(argv[1], img);
+    load_image(rdpth, img);
     // Showing image
     show_image(img);
     // Creating Luminousity Matrix
@@ -363,51 +454,67 @@ int main(int argc, const char** argv) {
 
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // APPLICATION LAYER
-    if(argc == 3) // Only Histogram Equilisation
-        global_histogram_equilisation(lum, new_lum); // Applying hist-eq with CDF (default)
-    else {
-        switch(argv[3][0]) {
-            case 'b' : // Boosting Filter
-            {
-                boosting_filter_i(filter);
-                apply_filter(lum, filter, new_lum);
-                break;
-            }
-            case 'a' : // Average Filter
-            {
-                average_filter_i(filter);
-                apply_filter(lum, filter, new_lum);
-                break;
-            }
-            case 's' : // Sobel Operator
-            {
-                sobel(filter, 'H');
-                apply_filter(lum, filter, new_lum);
-                break;
-            }
-            case 'm' : // Median Filter
-            {
-                apply_filter(lum, filter, new_lum, true);
-                break;
-            }
-            case 'g' : // Gamma Correction
-            {
-                int *map = (int *)calloc(256, sizeof(int));
-                gamma_correction_map(map, 1.0/2.2);
-                global_histogram_equilisation(lum, new_lum, map);
-                break;
-            }
-            default : {std::cout << "No viable option.\nExiting...\n"; exit(2);}
+    switch(prc[0]) {
+        case 'h' : // Histogram Equilisation
+        {
+            global_histogram_equilisation(lum, new_lum);
+            break;
         }
+        case 'b' : // Boosting Filter
+        {
+            boosting_filter_i(filter);
+            apply_filter(lum, filter, new_lum);
+            break;
+        }
+        case 'u' : // Unsharp Masking
+        {
+            average_filter_i(filter);
+            apply_filter(lum, filter, new_lum);
+            new_lum = lum + (lum - new_lum);
+            break;
+        }
+        case 'a' : // Average Filter
+        {
+            average_filter_i(filter);
+            apply_filter(lum, filter, new_lum);
+            break;
+        }
+        case 's' : // Sobel Operator
+        {
+            sobel(filter, 'H');
+            apply_filter(lum, filter, new_lum);
+            new_lum = lum + new_lum;
+            break;
+        }
+        case 'm' : // Median Filter
+        {
+            apply_filter(lum, filter, new_lum, true);
+            break;
+        }
+        case 'g' : // Gamma Correction
+        {
+            // break;
+            lum.convertTo(lum, CV_32F);
+            if(gm1)
+                cv::pow(lum, gmv1, new_lum);
+            else
+                cv::pow(lum, 1/2.2, new_lum);
+            new_lum.convertTo(new_lum, CV_8U);
+            break;
+        }
+        default : {std::cout << "No viable option.\nExiting...\n"; exit(2);}
     }
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     // Showing new luminance
     show_image(new_lum);
     // Applying new luminance to image
-    change_luminance(img, new_lum);
+    if(gm2)
+        change_luminance(img, new_lum, gmv2);
+    else
+        change_luminance(img, new_lum);
     // Showing new image
     show_image(img);
     // Saving image
-    save_image(argv[2], img);
+    save_image(svpth, img);
 }
