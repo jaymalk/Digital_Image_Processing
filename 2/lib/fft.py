@@ -42,8 +42,11 @@ def IFFT(_img: np.ndarray, _shft: bool = True) -> np.ndarray:
     return _img_rec
 
 
-# Ideal DFT Pad (for cv.dft)
-def cvdft_pad(_img: np.ndarray):
-    _x = cv.getOptimalDFTSize(_img.shape[0]) - _img.shape[0]
-    _y = cv.getOptimalDFTSize(_img.shape[1]) - _img.shape[1]
-    return cv.copyMakeBorder(_img, 0, _x, 0, _y, cv.BORDER_CONSTANT)
+# Padding function
+def __pad(_img: np.ndarray, _x: int, _y: int):
+    _x1 = _x//2
+    _x2 = (_x+1)//2
+    _y1 = _y//2
+    _y2 = (_y+1)//2
+    _img_pad = cv.copyMakeBorder(_img, _x1, _x2, _y1, _y2, cv.BORDER_CONSTANT)
+    return _img_pad

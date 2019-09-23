@@ -15,10 +15,10 @@ from mio import trace
 # param _h : estimate of deblurring function (PSF)
 # param _n : estimate of noise distribution
 # param _BW : whether the image is black and white
-def weiner_(_img: np.ndarray, _h: np.ndarray, _fest: np.ndarray = None, _n: np.ndarray = None, _BW: bool = True):
+def weiner_(_img: np.ndarray, _h: np.ndarray, SNR: float = 0.00000001, _BW: bool = True):
     try:
         # Getting the optimal DFT size
-        __shp = _img.shape
+        __shp = _img.shape[:2]
         '''
         Getting fourier transforms (all needed)
         Sensing
@@ -29,15 +29,17 @@ def weiner_(_img: np.ndarray, _h: np.ndarray, _fest: np.ndarray = None, _n: np.n
         where K can be either of |N(u,v)|/|F(u,v)| or |N|/|F| (over complete matrix)
         & recovered image  GH*
         '''
+
+        # If the image is colored (BGR)
+        if not _BW:
+            __temp = np.zeros(_img.shape)
+            for _i in [0,1,2]:
+                __temp[:,:,_i] = weiner_(_img[:,:,_i], _h, SNR, True)
+            return __temp
+        # else
         H = FFT(_h, __shp)
         G = FFT(_img, __shp)
-        if _n is None:
-            assert(_fest == None)
-            K = 0.0001
-        else:
-            N = FFT(_n, __shp)
-            F_ = FFT(_fest, __shp)
-            K = (abs(N)**2).sum()/(abs(F_)**2).sum()
+        K = SNR
         # Getting the inverse filter
         H_w = (np.conj(H)) * (1/(abs(H)**2 + K))
         # Getting the image back...
