@@ -388,18 +388,40 @@
     
 % -------------------------------------------------------
 % -------------------------------------------------------
-% Topic I
+% Topic II
     \pagebreak
     \subsection*{Edge-Perserving Smoothing}
     I implemented the \textit{total variation denoising} and used it on the images from previous discussion. Also, followed are results from an example implementation of total variation.
     
+    % Noisy Image
+    \begin{figure}[!htb]
+    \begin{center}
+     \includegraphics[scale=2.4]{./edge_preserving_smoothing/example/tv_noisy.png}
+     \caption{Noisy Image}
+    \end{center}
+    \end{figure}
+    
+    % Recovered Image
+    \begin{figure}[!htb]
+    \begin{center}
+     \includegraphics[scale=2.4]{./edge_preserving_smoothing/example/tv_recovered.png}
+     \caption{Recovered Image}
+    \end{center}
+    \end{figure}
+    
+    \pagebreak
+% -------------------------------------------------------
+% Complete
+    \subsubsection*{Gaussian Noise Images}
+    Here are the results of application of \textit{total variation filtering} on \textit{gaussian noise images} from before.
+    
     \begin{figure}[!htb]
     \minipage{0.45\textwidth}
-      \includegraphics[scale=.35]{../images/barbara.png}
+      \includegraphics[scale=.45]{./edge_preserving_smoothing/barbara/gaussian.png}
       \caption{Barbara}
     \endminipage \hfill
     \minipage{0.45\textwidth}
-      \includegraphics[scale=1.55]{../images/boat.png}
+      \includegraphics[scale=.45]{./edge_preserving_smoothing/boat/gaussian.png}
       \caption{Boat}
     \endminipage
     \end{figure}
@@ -408,62 +430,182 @@
     
     \begin{figure}[!htb]
     \minipage{0.45\textwidth}
-      \includegraphics[scale=1.4]{../images/sandiego.png}
+      \includegraphics[scale=.45]{./edge_preserving_smoothing/sandiego/gaussian.png}
       \caption{Sandiego}
     \endminipage \hfill
     \minipage{0.45\textwidth}
-      \includegraphics[scale=.35]{../images/shepplogan.png}
+      \includegraphics[scale=.45]{./edge_preserving_smoothing/shepplogan/gaussian.png}
       \caption{Shepplogan}
     \endminipage
     \end{figure}
+    
+    \pagebreak
+% -------------------------------------------------------
+% Complete
+    \subsubsection*{Salt/Pepper Noise Images}
+    Here are the results of application of \textit{total variation filtering} on \textit{salt/pepper noise images} from before.
+    
+    \begin{figure}[!htb]
+    \minipage{0.45\textwidth}
+      \includegraphics[scale=.45]{./edge_preserving_smoothing/barbara/sp.png}
+      \caption{Barbara}
+    \endminipage \hfill
+    \minipage{0.45\textwidth}
+      \includegraphics[scale=.45]{./edge_preserving_smoothing/boat/sp.png}
+      \caption{Boat}
+    \endminipage
+    \end{figure}
+    
+    \phantom{}
+    
+    \begin{figure}[!htb]
+    \minipage{0.45\textwidth}
+      \includegraphics[scale=.45]{./edge_preserving_smoothing/sandiego/sp.png}
+      \caption{Sandiego}
+    \endminipage \hfill
+    \minipage{0.45\textwidth}
+      \includegraphics[scale=.45]{./edge_preserving_smoothing/shepplogan/sp.png}
+      \caption{Shepplogan}
+    \endminipage
+    \end{figure}
+    
     \pagebreak
 % -------------------------------------------------------
 % Complete
 
     
-    \subsection*{Tone Mapping Algorithm}
-    In this section, I focused on implementing the \textbf{Reinhard Tone Map} and applied on a set of images. The original images produced, were processed to give promising mappings, shown below.
-    \begin{center}
-        \includegraphics[scale=.27]{./data/3/fnl.jpg}
-    \end{center}
-    Also, following was the general variation in the deciding s parameter.
-    \begin{center}
-        \includegraphics[scale=.27]{./data/3/plot.png}
-    \end{center}
-    \pagebreak
-    Also, following are how images vary if different parameters are set.
+% -------------------------------------------------------
+% -------------------------------------------------------
+% Topic IIIA
+    \subsection*{Deblurring}
+    \subsubsection*{Variation in Noise}
+    In this section, I focused on implementing the \textbf{Wiener Filtering Procedure} and applied on a set of \textit{blurred images}, with \textit{different noise variations}. The results are presented below. \\[10pt]
+    % Noise 0
     \begin{figure}[!htb]
     \minipage{0.32\textwidth}
-      \includegraphics[scale=.27]{./data/3/svar/s1.jpg}
-      \caption{s = 0.1}
+      \includegraphics[scale=.28]{./deblurring/0/final.png}
+      \caption{\(\sigma\) = 0.0}
     \endminipage\hfill
     \minipage{0.32\textwidth}
-      \includegraphics[scale=.27]{./data/3/svar/s2.jpg}
-      \caption{s = 2.1 (Optimal)}
+      \includegraphics[scale=.28]{./deblurring/0/recover.png}
+      \caption{Weiner Filtering}
     \endminipage\hfill
     \minipage{0.32\textwidth}%
-      \includegraphics[scale=.27]{./data/3/svar/s3.jpg}
-      \caption{s = 9.9}
+      \includegraphics[scale=.28]{./deblurring/0/inverse.png}
+      \caption{Inverse Filtering}
     \endminipage
     \end{figure}
+    \\[5pt]
+    % Noise 0.001
     \begin{figure}[!htb]
     \minipage{0.32\textwidth}
-      \includegraphics[scale=.27]{./data/3/avar/3_6.jpg}
-      \caption{key = .36}
+      \includegraphics[scale=.28]{./deblurring/0_001/final.png}
+      \caption{\(\sigma\) = 0.001}
     \endminipage\hfill
     \minipage{0.32\textwidth}
-      \includegraphics[scale=.27]{./data/3/avar/4_5.jpg}
-      \caption{key = .45}
+      \includegraphics[scale=.28]{./deblurring/0_001/recover.png}
+      \caption{Weiner Filtering}
     \endminipage\hfill
     \minipage{0.32\textwidth}%
-      \includegraphics[scale=.27]{./data/3/avar/7_2.jpg}
-      \caption{key = .72}
+      \includegraphics[scale=.28]{./deblurring/0_001/inverse.png}
+      \caption{Inverse Filtering}
     \endminipage
     \end{figure}
-    \\
+    % Break
     \pagebreak
-    \\
-    The results from the tonemapping algorithm are distinctively better than the methods implemented before. Seemingly intelligent, the tone-map provides gives a more realistic idea of how the original image may have looked. \\
+    \subsubsection*{Variation in Noise}
+    With increase in noise, some more observations were made (listed below).\\[10pt]
+    % Noise 0.01
+    \begin{figure}[!htb]
+    \minipage{0.32\textwidth}
+      \includegraphics[scale=.28]{./deblurring/0_01/final.png}
+      \caption{\(\sigma\) = 0.01}
+    \endminipage\hfill
+    \minipage{0.32\textwidth}
+      \includegraphics[scale=.28]{./deblurring/0_01/recover.png}
+      \caption{Weiner Filtering}
+    \endminipage\hfill
+    \minipage{0.32\textwidth}%
+      \includegraphics[scale=.28]{./deblurring/0_01/inverse.png}
+      \caption{Inverse Filtering}
+    \endminipage
+    \end{figure}
+    \bigbreak
+    \\[5pt]
+    % Noise 0.1
+    \begin{figure}[!htb]
+    \minipage{0.32\textwidth}
+      \includegraphics[scale=.28]{./deblurring/0_1/final.png}
+      \caption{\(\sigma\) = 0.1}
+    \endminipage\hfill
+    \minipage{0.32\textwidth}
+      \includegraphics[scale=.28]{./deblurring/0_1/recover.png}
+      \caption{Weiner Filtering}
+    \endminipage\hfill
+    \minipage{0.32\textwidth}%
+      \includegraphics[scale=.28]{./deblurring/0_1/inverse.png}
+      \caption{Inverse Filtering}
+    \endminipage
+    \end{figure}\\[5pt]
+    \begin{itemize}
+        \item Inverse Filtering gives invalid results in case there's noise.
+        \item The results obtained from Weiner Filtering get coarser as the noise increases.
+    \end{itemize}
+    \pagebreak
+
+% -------------------------------------------------------
+% Complete
+
+    
+% -------------------------------------------------------
+% -------------------------------------------------------
+% Topic IIIB
+    \subsubsection*{Variation in Estimate}
+    In the previous sections we used the original image spectrum \(F(u,v)\) as the \textit{estimate parameter} in \textit{weiner filtering.} Now in this section I tried some generic estimates for the image. The following results were observed.
+
+    \pagebreak
+% -------------------------------------------------------
+% Complete
+
+
+    
+% -------------------------------------------------------
+% -------------------------------------------------------
+% Topic IVB
+    \subsection*{Real World Images}
+    In this section we were supposed to use whatever we have learned so far, in trying to recover images from real world scenarios of blurring/noising.\\[1pt]
+    % SHAN
+    \textbf{Motion Blur I}\\
+    The image provided was motion-blurred.\\[3pt]
+    % Features
+    \begin{figure}[!htb]
+    \minipage{0.52\textwidth}
+     \centering
+      \includegraphics[scale=2.2]{./real_world/shan/uniform.png}
+      \caption{Uniform Patch \((\sigma = 0)\)}
+    \endminipage\hfill
+    \minipage{0.52\textwidth}
+    \centering
+      \includegraphics[scale=3.5]{./real_world/shan/psf.png}
+      \caption{PSF Estimate}
+    \endminipage\hfill
+    \end{figure}
+    % Images
+    \begin{figure}[!htb]
+    \minipage{0.45\textwidth}
+      \includegraphics[scale=1.25]{./real_world/shan/shan.png}
+      \caption{Blurred Image}
+    \endminipage\hfill
+    \minipage{0.45\textwidth}
+      \includegraphics[scale=0.3]{./real_world/shan/5.png}
+      \caption{Recovered Image}
+    \endminipage\hfill
+    \end{figure}
+    \pagebreak
+% -------------------------------------------------------
+% Complete
+
+
     \subsection*{Summary}
     All required by the assignment was implemented and a lot of new things were learned/understood. The codes are written in Python (for part 1 \& 3) and in C++ (for part 2). All the functions were implemented on own (except for the FFT, which was allowed to be used). \\
     I am also looking forward to implementing other options from the assignment (which unfortunately due to internship acquiring process I couldn't devote time to).\\
