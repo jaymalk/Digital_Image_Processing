@@ -562,6 +562,30 @@
 % Topic IIIB
     \subsubsection*{Variation in Estimate}
     In the previous sections we used the original image spectrum \(F(u,v)\) as the \textit{estimate parameter} in \textit{weiner filtering.} Now in this section I tried some generic estimates for the image. The following results were observed.
+    
+    \begin{figure}[!htb]
+    \minipage{0.45\textwidth}
+      \includegraphics[scale=.45]{./deblurring/estimate/noisy.png}
+      \caption{Noisy Image}
+    \endminipage \hfill
+    \minipage{0.45\textwidth}
+      \includegraphics[scale=.45]{./deblurring/estimate/real.png}
+      \caption{Real Image Estimate}
+    \endminipage
+    \end{figure}
+    
+    \phantom{}
+    
+    \begin{figure}[!htb]
+    \minipage{0.45\textwidth}
+      \includegraphics[scale=.45]{./deblurring/estimate/constant.png}
+      \caption{Constant Image Estimate}
+    \endminipage \hfill
+    \minipage{0.45\textwidth}
+      \includegraphics[scale=.45]{./deblurring/estimate/power.png}
+      \caption{Power Estimate}
+    \endminipage
+    \end{figure}
 
     \pagebreak
 % -------------------------------------------------------
@@ -606,12 +630,14 @@
     
     %Bharti
     \textbf{Defocus Blur I}\\
-    The image provided was focus-blurred.\\[3pt]
+    The image provided was focus-blurred. The image was analysed in various ways to get the idea of \(H\) Spectrum and \(N\) Spectrum.\\[1pt]
+    For getting the idea of noise, a uniform patch in the image (sky) was clipped and then analysed, which indicated the noise was as good as void.\\
+    Then a (partial) edge in the image was analysed, where the gradient of values gave the idea of spread of blurring. A good approximate was a disc shaped spatial filter\\
     % Features
     \begin{figure}[!htb]
     \minipage{0.45\textwidth}
      \centering
-      \fbox{\includegraphics[scale=4.2]{./real_world/bharti/uniform.png}}
+      \fbox{\includegraphics[scale=3.3]{./real_world/bharti/uniform.png}}
       \caption{Uniform Patch \((\sigma = 0)\)}
     \endminipage\hfill
     \minipage{0.45\textwidth}
@@ -620,14 +646,15 @@
       \caption{Gradient}
     \endminipage\hfill
     \end{figure}
+    \bigbreak
     % Images
     \begin{figure}[!htb]
     \minipage{0.45\textwidth}
-      \includegraphics[scale=0.33]{./real_world/bharti/bharti.png}
+      \includegraphics[scale=0.35]{./real_world/bharti/bharti.png}
       \caption{Blurred Image}
     \endminipage\hfill
     \minipage{0.45\textwidth}
-      \includegraphics[scale=0.3]{./real_world/bharti/final.png}
+      \includegraphics[scale=0.35]{./real_world/bharti/final.png}
       \caption{Recovered Image}
     \endminipage\hfill
     \end{figure}
@@ -635,6 +662,7 @@
     
     % Yuzhikov
     \textbf{Defocus Blur II}\\
+    Working out this image involved the same steps as above, except for that the best approximation for the filter was a disc based function with radius 8.
     \begin{figure}[!htb]
     \minipage{0.45\textwidth}
       \includegraphics[scale=0.33]{./real_world/yuzhikov/yuzhikov.png}
@@ -645,6 +673,10 @@
       \caption{Recovered Image}
     \endminipage\hfill
     \end{figure}
+    
+    \subsubsection*{Note}
+    In the case of defocus blur, we observe that ringing is prominent. This may arise from the fact that since the disc function have abrupt cuts, which leads to ringing in the fourier domain, and thus edges resonates rings.\\
+    Also to eliminate unnecessary ringing from considering the periodic image (i.e. totally different pixel values once the image is repeated), I blurred the image borders with the wrapped around images. This caused significant decrease in ringing in recovered images.
     \pagebreak
 % -------------------------------------------------------
 % Complete
