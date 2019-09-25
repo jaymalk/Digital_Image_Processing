@@ -5,6 +5,7 @@
     \usepackage{color}
     \usepackage{graphicx}
     \usepackage{enumitem}
+    \usepackage{incgraph}
     \hyphenpenalty=10000
     \exhyphenpenalty=10000
     % \usepackage[T1]{fontenc}
@@ -696,5 +697,65 @@
     All required by the assignment was implemented and a lot of new things were learned/understood. The codes are written in Python. All the functions were implemented on own (except for the FFT, which was allowed to be used). \\
     The code was patterned as a library of functions, which can be used on any Python interpreter in a series of steps to give the desired solution. (for assignment)\\
     The assignment was intriguing and I learnt a lot of new ideas. Thanks and Regards.
+    
+    
+    \pagebreak
+% -------------------------------------------------------
+% Complete
+
+% -------------------------------------------------------
+% -------------------------------------------------------
+    % Bonus
+    \subsection*{*Bonus Section}
+    I eventually came across a way to design an edge preserving filter. The results were impressive, so I tested it with a challenging image, shown below (Zoomed Versions).
+    
+    \begin{figure}[!htb]
+    \minipage{1\textwidth}
+      \begin{center}
+        \includegraphics[scale=0.33]{2/bonus/lines_zoom.png}
+       \caption{Original Image}
+      \end{center}
+    \endminipage\hfill
+    \end{figure}
+    
+    \begin{figure}[!htb]
+    \minipage{0.45\textwidth}
+      \includegraphics[scale=0.33]{2/bonus/recovered_zoom.png}
+      \caption{Edge Preserved}
+    \endminipage\hfill
+    \minipage{0.45\textwidth}
+      \includegraphics[scale=0.3]{2/bonus/weiner_zoom.png}
+      \caption{Weiner}
+    \endminipage
+    \end{figure}
+    
+    
+    \pagebreak
+    \begin{figure}
+        \includegraphics[scale=0.16]{2/bonus/lines.png}
+        \caption{Original Image}
+        \label{fig:my_label}
+    \end{figure}
+    
+    \pagebreak
+    \begin{figure}
+        \includegraphics[scale=0.16]{2/bonus/noisy.png}
+        \caption{Blurred/Noisy Image}
+        \label{fig:my_label}
+    \end{figure}
+    
+    \pagebreak
+    \begin{figure}
+        \includegraphics[scale=0.16]{2/bonus/recovered.png}
+        \caption{Edge Preserving Filter}
+        \label{fig:my_label}
+    \end{figure}
+    
+    \pagebreak
+    \begin{figure}
+        \includegraphics[scale=0.16]{2/bonus/weiner.png}
+        \caption{Weiner Recovered}
+        \label{fig:my_label}
+    \end{figure}
     
 \end{document}
