@@ -683,6 +683,30 @@
 
 % -------------------------------------------------------
 % -------------------------------------------------------
+    % Noise Analysis
+    \subsection*{Noise Analysis}
+    Starting with \textit{gaussian noise} with std. dev. \(\sigma\) (assuming mean \(\mu = 0\)) and shape \((M,N)\). \\
+    Now, \(\sum n(x, y)^2 = \sum |n(x, y) - \mu|^2 = \sigma^2 * M * N\) \\
+    And, thus our noise spectrum magnitude becomes (in spatial domain) \(\sigma^2 * M * N\).\\
+    Also, from the property of fourier transform, \(\sum |n(x, y)|^2 = \frac{1}{MN}*\sum |N(u,v)|^2\), \\
+    we get that, \(\sum |N(u, v)|^2 = \sigma^2 * M^2 * N^2\). \\
+    
+    \begin{table}[]
+    \centering
+    \begin{tabular}{c|c|c}
+    \(\sigma\) & \(\sum |N(u, v)|^2\) & {\(\frac{\sum |N(u, v)|^2}{\sigma^2 * M^2 * N^2}\)} \\
+        0.1 & 688280680.32 &{1.0015} \\
+        0.01 & 6905896.64 &{1.0049} \\
+        0.001 & 68811.47 &{1.0013}
+    \end{tabular}
+    \end{table}
+
+% -------------------------------------------------------
+% Complete
+
+
+% -------------------------------------------------------
+% -------------------------------------------------------
     % Conclusion
     \subsection*{Observations}
     Following were the major observations for sub-parts.
