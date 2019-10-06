@@ -62,7 +62,7 @@ def gaussian_pyramid(_img: np.ndarray, _a: float = 0.4) -> List[np.ndarray]:
         # Store
         _gaussian.append(_new)
         # Check
-        if _new.shape[0] == 2 or _new.shape[1] == 2:
+        if _new.shape[0] <= 3 or _new.shape[1] <= 3:
             break
     # Returning the pyramid
     return _gaussian
@@ -205,3 +205,12 @@ def blend_(_img1: np.ndarray, _img2: np.ndarray, _blnd: np.ndarray, _a: float = 
     # General Exception
     except:
         trace()
+
+
+# Laplacian Denoise
+def pyramid_denoise(_img: np.ndarray, _ctof: float, _rng: int = -1):
+    __l = laplacian_pyramids(_img)
+    __n = len(__l) if _rng == -1 else _rng
+    for _i in range(__n):
+        __l[-_i-1] = np.where(abs(__l[-1-_i]) < _ctof, 0, __l[-1-_i])
+    return recreate_(__l)
