@@ -12,19 +12,14 @@
 #include "image_io.hpp"
 #include "haar.hpp"
 
-void write_haar(Mat& img) {
-    img *= 1000;
-    int *_tab = new int[2001]();
-    for(size_t i{}; i<img.size().height; i++)
-        for(size_t j{}; j<img.size().width; j++)
-            _tab[(int)round(img.at<float>(i, j))+1000]++;
-    for(int i=0; i<2001; i++) cout << i-1000 << ":" << _tab[i] << "\n";
-    free(_tab);
-}
 
-void cutoff_reduce(Mat& img, int k) {
+// ! COMPRESSION PART
+
+
+// Thresholding
+void cutoff_reduce(Mat& img, int _ct) {
     // Setting the cutoff based on k and maximum
-    float _cut = (float)k/100.0;
+    float _cut = (float)_ct/100.0;
     for(size_t i{}; i<img.size().height; i++)
         for(size_t j{}; j<img.size().width; j++) {
             if(abs(img.at<float>(i, j)) < _cut)
@@ -32,19 +27,18 @@ void cutoff_reduce(Mat& img, int k) {
         }
 }
 
-// ! RUN LENGTH ENCODING
 
+// Run length encoder
 vector<pair<uchar, int>> runlength_encode(Mat& img) {
     // First attempt
     float _max = img.at<float>(0,0);
-    img /= (_max+1);
     img *= 128;
     img += 128;
     img.convertTo(img, CV_8UC1);
     // Coding now
     vector<pair<uchar, int>> _code;
     uchar _cval = img.at<uchar>(0,0);
-    int _run = 1;
+    int _run = 0;
     for(size_t i{}; i<img.size().height; i++)
         for(size_t j{}; j<img.size().width; j++)
             if(img.at<uchar>(i,j) == _cval) {
@@ -55,10 +49,12 @@ vector<pair<uchar, int>> runlength_encode(Mat& img) {
                 _cval = img.at<uchar>(i,j);
                 _run = 1;
             }
+    _code.push_back({_cval, _run});
     return _code;
 }
 
-void write_run_length(Size _size, vector<pair<uchar, int>> _code, string _fname = "./save.bin") {
+// Writing to the file
+void write_run_length(Size _size, vector<pair<uchar, int>> _code, string _fname) {
     // Opening the binary file
     ofstream out(_fname, ios::binary | ios::out);
     // Writing the size of the image
@@ -69,23 +65,23 @@ void write_run_length(Size _size, vector<pair<uchar, int>> _code, string _fname 
     int _len = _code.size();
     out.write(reinterpret_cast<const char *>(&_len), sizeof(int));
     // Writing the run length encoded image
-    for(auto& _p : _code)
-        out.write(reinterpret_cast<const char *>(&_p), sizeof(_p));
+    for(size_t i{}; i<_len; i++)
+        out.write(reinterpret_cast<const char *>(&(_code[i])), sizeof(pair<uchar, int>));
     // Closing the file
     out.close();
 }
 
-int main(int argc, char const *argv[])
+
+// Encoder
+void encode(string path, int _cut, string _fname = "./save.bin")
 {
-    string path = argv[1];
-    int k = stoi(argv[2]);
     Mat img;
     // Loading the image
     load_image(path, img, true);
     // Taking the haar transform of the image
     haar_transform(img, img.size().height, img.size().width);
     // Thresholding the image
-    cutoff_reduce(img, k);
+    cutoff_reduce(img, _cut);
     // Taking the inverse transform
     inverse_haar_transform(img, img.size().height, img.size().width);
     // Taking the de-normalised transform
@@ -93,7 +89,154 @@ int main(int argc, char const *argv[])
     // Creating a run length encoded form of the image
     vector<pair<uchar, int>> _encoded = runlength_encode(img);
     // Writing the binary image
-    write_run_length(img.size(), _encoded);
-    // Return
-    return 0;
+    write_run_length(img.size(), _encoded, _fname);
+}
+
+
+// ! DECOMPRESSION PART
+
+// Reader
+void read_run_length(string _fname, Size& _sz, vector<pair<uchar, int>>& _decode) {
+    // Opening the binary file
+    ifstream in(_fname, ios::binary | ios::in);
+    // Reading the matrix size
+    short _h, _w;
+    in.read(reinterpret_cast<char *>(&_h), sizeof(short));
+    in.read(reinterpret_cast<char *>(&_w), sizeof(short));
+    // Reading the length of encoding
+    int _l;
+    in.read(reinterpret_cast<char *>(&_l), sizeof(int));
+    // Reading the complete encoding in the vector
+    pair<uchar, int> _p;
+    for(int i=0; i<_l; i++) {
+        in.read(reinterpret_cast<char *>(&_p), sizeof(pair<uchar, int>));
+        _decode.push_back(_p);
+    }
+    // Setting the size
+    _sz = Size(_h, _w);
+    // Closing the file
+    in.close();
+}
+
+// Recreator
+void recreate_image(Mat& _img, vector<pair<uchar, int>>& _decode) {
+    // Local variables
+    uchar _val = 0; int _run = 0;
+    // Looping on all values of the matrix
+    for(int i = _img.size().height-1; i>=0; i--)
+        for(int j = _img.size().width-1; j>=0; j--) {
+            if(_run == 0) {
+                _val = _decode.back().first;
+                _run = _decode.back().second;
+                _decode.pop_back();
+            }
+            _img.at<float>(i,j) = (static_cast<float>(_val)-128)/128.0;
+            _run--;
+        }
+    // The decoded data must be completely used
+    assert(_decode.empty() && (_run == 0));
+}
+
+// Decoder
+void decode(string _bname, string _sname) {
+    // Local variables
+    Mat _img; Size _sz; vector<pair<uchar, int>> _decode{};
+    // Reading from the file (binary)
+    read_run_length(_bname, _sz, _decode);
+    // Creating the matrix
+    _img = Mat::zeros(_sz, CV_32F);
+    // Recreating the transform from the image 
+    recreate_image(_img, _decode);
+    // Taking the inverse-transform of the image (denormalised)
+    inverse_haar_transform(_img, _img.size().height, _img.size().width, false);
+    // Saving the image
+    save_image(_sname, _img);
+}
+
+int main(int argc, char const *argv[]) {
+    // Local varaibles
+    string _fname, _bname, _sname; int _case, _cut;
+    // Reading command line arguments
+    switch(argc) {
+        case 1: {
+            cout << "Enter protocol [decode (0) or encode (1)] : ";
+            cin >> _case;
+            if(_case) {
+                cout << "Enter image path: ";
+                cin >> _fname;
+            }
+            else {
+                cout << "Enter binary path: ";
+                cin >> _bname;
+            }
+            cout << "Enter save-path: ";
+            cin >> _sname;
+            if(_case) {
+                cout << "Enter cutoff (0-100): ";
+                cin >> _cut;
+                assert(abs(_cut)<=100);
+            }
+            break;
+        }
+        case 2: {
+            _case = stoi(argv[1]);
+            if(_case) {
+                cout << "Enter image path: ";
+                cin >> _fname;
+            }
+            else {
+                cout << "Enter binary path: ";
+                cin >> _bname;
+            }
+            cout << "Enter save-path: ";
+            cin >> _sname;
+            if(_case) {
+                cout << "Enter cutoff (0-100): ";
+                cin >> _cut;
+                assert(abs(_cut)<=100);
+            }
+            break;
+        }
+        case 3: {
+            _case = stoi(argv[1]);
+            if(_case) _fname = argv[2];
+            else _bname = argv[2];
+            cout << "Enter save-path: ";
+            cin >> _sname;
+            if(_case) {
+                cout << "Enter cutoff (0-100): ";
+                cin >> _cut;
+                assert(abs(_cut)<=100);
+            }
+            break;
+        }
+        case 4: {
+            _case = stoi(argv[1]);
+            if(_case) _fname = argv[2];
+            else _bname = argv[2];
+            _sname = argv[3];
+            if(_case) {
+                cout << "Enter cutoff (0-100): ";
+                cin >> _cut;
+                assert(abs(_cut)<=100);
+            }
+            break;
+        }
+        case 5: {
+            _case = stoi(argv[1]);
+            assert(_case);
+            _fname = argv[2];
+            _sname = argv[3];
+            _cut = stoi(argv[4]);
+            assert(abs(_cut) <= 100);
+            break;
+        }
+        default: {
+            cout << "Incomplete Arguments. Exiting\n";
+            exit(1);
+        }
+    }
+    // Calling for service
+    if(_case) encode(_fname, _cut, _sname);
+    else decode(_bname, _sname);
 }
