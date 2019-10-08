@@ -15,9 +15,44 @@
 
 // ! COMPRESSION PART
 
+void reset_cut(Mat& img, int& _ct) {
+    // Getting the cutoff for top _ct%
+    int *_tab = new int[10001]();
+    double *_mx = new double, *_mn = new double;
+    // Getting the image maximum
+    minMaxLoc(abs(img), _mn, _mx);
+    img *= 5000;
+    img /= (*_mx);
+    // Filling up the matrix
+    for(size_t i{}; i<img.size().height; i++)
+        for(size_t j{}; j<img.size().width; j++)
+            _tab[(int)round(img.at<float>(i, j))+5000]++;
+    // Getting the cutoff
+    long _total = (img.size().height * img.size().width * _ct) / 100;
+    long _cnt = _tab[5000];
+    for(int i=1; i<=5000; i++) {
+        _cnt += _tab[5000-i];
+        _cnt += _tab[5000+i];
+        if(_cnt >= _total) {
+            cout << _ct << " " << i << "\n";
+            cout << _cnt << " " << _total << "\n";
+            _ct = (int)((*_mx) * ((float)i/5000.0));
+            break;
+        }
+    }
+    // Resetting the image
+    img /= 5000.0;
+    img *= (*_mx);
+    // Freeing space
+    free(_tab);
+    free(_mx);
+    free(_mn);
+}
+
 
 // Thresholding
 void cutoff_reduce(Mat& img, int _ct) {
+    reset_cut(img, _ct);
     // Setting the cutoff based on k and maximum
     float _cut = (float)_ct/100.0;
     for(size_t i{}; i<img.size().height; i++)
