@@ -52,7 +52,7 @@ void reset_cut(Mat& img, int& _ct) {
 
 // Thresholding
 void cutoff_reduce(Mat& img, int _ct) {
-    reset_cut(img, _ct);
+    // reset_cut(img, _ct);
     // Setting the cutoff based on k and maximum
     float _cut = (float)_ct/100.0;
     for(size_t i{}; i<img.size().height; i++)
