@@ -78,9 +78,13 @@ void encode(string path, int _cut, string _fname = "./save.bin")
     // Loading the image
     load_image(path, img, true);
     // Taking the haar transform of the image
-    lazy_transform(img, img.size());
+    lazy_transform(img, img.size(), true);
     // Thresholding the image
     cutoff_reduce(img, _cut);
+    // Taking the haar transform of the image
+    lazy_inverse(img, img.size(), true);
+    // Taking the transform again
+    lazy_transform(img, img.size());
     // Creating a run length encoded form of the image
     vector<pair<uchar, int>> _encoded = runlength_encode(img);
     // Writing the binary image

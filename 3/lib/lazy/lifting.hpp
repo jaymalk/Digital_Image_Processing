@@ -83,7 +83,9 @@ Mat lazy_wavelet_inverse(Mat _arr, short _len) {
  *
  * 
  */
-void lazy_transform(Mat& _img, Size _shp) {
+void lazy_transform(Mat& _img, Size _shp, bool _scl = false) {
+    float __c = 1;
+    if(_scl) __c = 1.4;
 
     // Getting the dimensions
     short __l1 = _shp.height, __l2 = _shp.width;
@@ -110,14 +112,14 @@ void lazy_transform(Mat& _img, Size _shp) {
     _img.copyTo(__temp);
     for(int i=0; i<__l1; i++)
         for(int j=0; j<__l2; j++) {
-            if(!(i%2 || j%2)) { _img.at<float>(i/2, j/2) = __temp.at<float>(i, j); };
+            if(!(i%2 || j%2)) { _img.at<float>(i/2, j/2) = __c*__temp.at<float>(i, j); };
             if(i%2 && !(j%2)) { _img.at<float>(__l1/2 + (i-1)/2, j/2) = __temp.at<float>(i, j); };
             if(!(i%2) && j%2) { _img.at<float>(i/2, __l2/2 + (j-1)/2) = __temp.at<float>(i, j); };
             if ( i%2 && j%2 ) { _img.at<float>(__l1/2 + (i-1)/2, __l2/2 + (j-1)/2) = __temp.at<float>(i, j); };
         }
     
     // Calling the recursion
-    lazy_transform(_img, Size(__l1/2, __l2/2));
+    lazy_transform(_img, Size(__l1/2, __l2/2), _scl);
 }
 
 
@@ -125,7 +127,9 @@ void lazy_transform(Mat& _img, Size _shp) {
  *
  * 
  */
-void lazy_inverse(Mat& _img, Size _shp) {
+void lazy_inverse(Mat& _img, Size _shp, bool _scl = false) {
+    float __c = 1;
+    if(_scl) __c = 1.4;
 
     // Getting the dimensions
     short __l1 = _shp.height, __l2 = _shp.width;
@@ -134,14 +138,14 @@ void lazy_inverse(Mat& _img, Size _shp) {
     if (__l2 <= 2 || __l1 <= 2) return;
 
     // Working on the lower levels of recursion
-    lazy_inverse(_img, Size(__l1/2, __l2/2));
+    lazy_inverse(_img, Size(__l1/2, __l2/2), _scl);
 
     // Reorganising the matrix
     Mat __temp;
     _img.copyTo(__temp);
     for(int i=0; i<__l1; i++)
         for(int j=0; j<__l2; j++) {
-            if (i<__l1/2 && j<__l2/2)  { _img.at<float>(2*i, 2*j) = __temp.at<float>(i, j); };
+            if (i<__l1/2 && j<__l2/2)  { _img.at<float>(2*i, 2*j) = __temp.at<float>(i, j)/__c; };
             if(i>=__l1/2 && j<__l2/2)  { _img.at<float>((i-__l1/2)*2+1, 2*j) = __temp.at<float>(i, j); };
             if(i<__l1/2 && j>=__l2/2)  { _img.at<float>(2*i, (j-__l2/2)*2+1) = __temp.at<float>(i, j); };
             if(i>=__l1/2 && j>=__l2/2) { _img.at<float>((i-__l1/2)*2+1, (j-__l2/2)*2+1) = __temp.at<float>(i, j); };

@@ -104,11 +104,11 @@ int main(int argc, char const *argv[])
 
     //! Process
     // Transform
-    lazy_transform(_img, _img.size());
+    lazy_transform(_img, _img.size(), true);
     // Denosing
     denoise(_img, _k, _c);
     // Inverse
-    lazy_inverse(_img, _img.size());
+    lazy_inverse(_img, _img.size(), true);
     // Saving
     if(_pth)
         save_image(wrpath, _img);
