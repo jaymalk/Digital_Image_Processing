@@ -712,7 +712,7 @@
     \begin{figure}[!htb]
     \minipage{1\textwidth}
       \begin{center}
-        \includegraphics[scale=0.33]{2/bonus/lines_zoom.png}
+        \includegraphics[scale=0.35]{2/bonus/original_zoom.png}
        \caption{Original Image}
       \end{center}
     \endminipage\hfill
@@ -720,14 +720,16 @@
     
     \begin{figure}[!htb]
     \minipage{0.45\textwidth}
-      \includegraphics[scale=0.33]{2/bonus/recovered_zoom.png}
+      \includegraphics[scale=0.35]{2/bonus/recovered_zoom.png}
       \caption{Edge Preserved}
     \endminipage\hfill
     \minipage{0.45\textwidth}
-      \includegraphics[scale=0.3]{2/bonus/weiner_zoom.png}
+      \includegraphics[scale=0.35]{2/bonus/weiner_zoom.png}
       \caption{Weiner}
     \endminipage
     \end{figure}
+    
+    A simple introduction of penalty in terms of \textbf{Total Variation Norm} led to edge being preserved. Not much changes were made, since I had implemented total variation in the denoising part :)
     
     
     \pagebreak
