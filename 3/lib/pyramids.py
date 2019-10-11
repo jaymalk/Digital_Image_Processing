@@ -210,7 +210,7 @@ def blend_(_img1: np.ndarray, _img2: np.ndarray, _blnd: np.ndarray, _a: float = 
 # Laplacian Denoise
 def pyramid_denoise(_img: np.ndarray, _ctof: float, _rng: int = -1):
     __l = laplacian_pyramids(_img)
-    __n = len(__l) if _rng == -1 else _rng
-    for _i in range(__n):
-        __l[-_i-1] = np.where(abs(__l[-1-_i]) < _ctof, 0, __l[-1-_i])
+    __n = len(__l)-1 if _rng == -1 else min(_rng, len(__l)-1)
+    for _i in range(0, __n):
+        __l[_i] = np.where(abs(__l[_i]) < _ctof, 0, __l[_i])
     return recreate_(__l)

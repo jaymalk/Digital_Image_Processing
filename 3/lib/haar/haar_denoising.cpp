@@ -7,7 +7,7 @@
 #include <string>
 #include <opencv2/opencv.hpp>
 
-#include "image_io.hpp"
+#include "../image_io.hpp"
 #include "haar.hpp"
 
 
@@ -44,7 +44,8 @@ void denoise(Mat& _matrix, float _k, bool smooth = true) {
 int main(int argc, char const *argv[])
 {
     // Reader
-    string rdpath;
+    string rdpath, wrpath;
+    bool _pth = false;
     float _k;
     bool _c;
     switch(argc) {
@@ -78,6 +79,14 @@ int main(int argc, char const *argv[])
             _c = (bool)stoi(argv[3]);
             break;
         }
+        case 5: {
+            rdpath = argv[1];
+            _k = stof(argv[2]);
+            _c = (bool)stoi(argv[3]);
+            _pth = true;
+            wrpath = argv[4];
+            break;
+        }
         default: {
             cerr << "Invalid arguments\n";
             exit(1);
@@ -101,7 +110,10 @@ int main(int argc, char const *argv[])
     // Inverse
     inverse_haar_transform(_img, _img.size().height, _img.size().width);
     // Saving
-    save_image("./" + to_string(_c) + "_"+to_string(_k)+".jpg", _img);
+    if(_pth)
+        save_image(wrpath, _img);
+    else 
+        save_image("./" + to_string(_c) + "_"+to_string(_k)+".jpg", _img);
 
     return 0;
 }
