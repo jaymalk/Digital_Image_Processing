@@ -140,6 +140,35 @@
     %
     \end{figure}
     
+% ------------------------------------------------------- 
+    \pagebreak
+    \textbf{Another example}
+    
+    \begin{figure}[!htb]
+    \minipage{0.5\textwidth}
+      \fbox{\includegraphics[scale=.20]{3/.report/blending/et/eye.png}}
+      \caption{Merger}
+    \endminipage \hfill
+    %
+    \minipage{0.5\textwidth}
+      \includegraphics[scale=.20]{3/.report/blending/et/hand.png}
+      \caption{Merge}
+    \endminipage \hfill
+    \end{figure}
+    
+    \begin{figure}[!htb]
+    \minipage{0.5\textwidth}
+      \fbox{\includegraphics[scale=.20]{3/.report/blending/et/mask.png}}
+      \caption{Merger}
+    \endminipage \hfill
+    %
+    \minipage{0.5\textwidth}
+      \includegraphics[scale=.20]{3/.report/blending/et/blend.png}
+      \caption{Merge}
+    \endminipage \hfill
+    %
+    \end{figure}
+% ------------------------------------------------------- 
     \pagebreak
 % -------------------------------------------------------
 % Denoising
@@ -270,11 +299,58 @@
 %---------------------------------------------
 % Bonus
 \subsection*{Wavelets with Lifting Scheme}
+I implemented the wavelet-transform, as deescribed in the paper provided.\\
+This wavelet transform, is based on piece-wise linear approximation and wavelet functions. Unlike Haar-Transform, the transform focuses on linearity-correlation b/w contigious coefficients. This allows it to preserve linear variation very efficiently.\\
+Also, since the transform is bi-orthogonal, all the coefficients (approximating and detailing) were given the same weightage. This made denoising and compression very difficult. To counter that, I also implemented another form, where there is scaling b/w levels leading to better results, these are presented here.\\
+Another note (also an observation) is that Haar-Transform performs better than this transform on discrete (cartoon-type) images, because its key-functions are all constant functions. In the case of continuous images, the new transform performed much better.\\
+\subsubsection*{Denoising}
+
+    \begin{figure}[!htb]
+    \minipage{0.45\textwidth}
+      \includegraphics[scale=0.4]{3/.report/denoising/bn/0_0_125000.jpg}
+      \caption{Continuous}
+    \endminipage \hfill
+    \minipage{0.45\textwidth}
+      \includegraphics[scale=.4]{3/.report/denoising/bn/0_0_097500.jpg}
+      \caption{Discrete}
+    \endminipage
+    \end{figure}
+
+\pagebreak
+\subsubsection*{Compression}
+
+    \textbf{Image}: Boat  \textbf{Type}: Continuous\\
+    \begin{figure}[!htb]
+    \minipage{0.45\textwidth}
+      \includegraphics[scale=0.4]{3/.report/compression/3/15.png}
+      \caption{K = 15}
+    \endminipage \hfill
+    \minipage{0.45\textwidth}
+      \includegraphics[scale=.4]{./compression/3/50.png}
+      \caption{K = 50}
+    \endminipage
+    \end{figure}
+    
+    \begin{figure}[!htb]
+    \minipage{0.45\textwidth}
+      \includegraphics[scale=0.4]{./compression/3/80.png}
+      \caption{K = 80}
+    \endminipage \hfill
+    \minipage{0.45\textwidth}
+      \includegraphics[scale=.4]{./compression/plots/bn.png}
+      \caption{Plot of binary-size vs. K}
+    \endminipage
+    \end{figure}
+    \\
+    \textbf{Comment}\\
+    Lifting-lazy scheme transform lost image clarity very early on, but still around smaller values of K, both image clarity and size were very well related (as good as jpeg).
 
 %--------------------------------------------- 
 \pagebreak
 %---------------------------------------------
 % Summary
 \subsection*{Summary}
-
+    This assignment was very interesting, and I learnt a lot of new things. What was discussed in class was very helpful. \\
+    Thanks and Regards\\
+    Rajbir
 \end{document}
