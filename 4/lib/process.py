@@ -17,6 +17,8 @@ _mask = None
 def process_image(_img: np.ndarray, _name: str = 'default'):
     # First aligning the image
     _imga = image_alignment(_img, _template)
+    write('align'+_name, _imga)
+    _imga = cv.medianBlur(_imga, 3)
     # Adaptive Histogram Equalisation
     _imgadap = adaptive_hist_equalise(_imga)
     # Segmenting fields using the mask
@@ -40,3 +42,18 @@ def process_image(_img: np.ndarray, _name: str = 'default'):
             cv.rectangle(_msk, (_x, _y), (_x+_w, _y+_h), 255, -1)
     write('lab_'+_name, _imgadap)
     write('char_'+_name, np.where(_msk == 0, 0, _imgmg))
+
+
+if __name__ == "__main__":
+    # Reading global variables
+    _template = read('./__main.jpg', False)
+    _mask = read('./best.png', False)
+
+    # Working on all the images
+    _path = '../all-images/'
+    for _n in ['booklets/']:
+        _p = _path+_n
+        for _i in run(['ls', _p], capture_output=True).stdout.decode().rstrip().split():
+            _img = read(_p+_i, False)
+            # _img = cv.cvtColor(_img, cv.COLOR_GRAY2BGR)
+            process_image(_img, _n[:-1]+'_'+_i)
