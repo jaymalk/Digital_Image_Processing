@@ -66,7 +66,7 @@
     \pagebreak
     \subsection*{Image Alignment}
 % -------------------------------------------------------
-    I worked upon the\e lines of a standard form scanner, to get all the input images aligned correctly.\\
+    I worked upon the lines of a standard form scanner, to get all the input images aligned correctly.\\
     Having created a template-default form, I used it as reference to get the ideal warp-perspective for the input image, with the help of descriptor-matching.\\
     The exact pseudo-code for the same has been described below...\\
     \begin{lstlisting}
@@ -84,297 +84,424 @@ def image_alignment(_input_image, _template):
     Further, I present the results of alignment on all the categories (2 of each kind).\\
 \textbf{Another Approach}\\
     I also tried with a much simpler approach earlier, which involved finding the lines using \texttt{Canny-Edge Detector} and then using \texttt{Hough-Transform} to get the angle at which maximum no. of lines appeared.\\ This approached, though naive seemed to work sensibly for \texttt{scanned}-images, but failed badly for both \texttt{printouts} and \texttt{boooklets}. So, I was compelled to drop the idea.
-\pagebreak
 % -------------------------------------------------------
-
+\pagebreak
     \begin{figure}[!htb]
     %
     \minipage{\textwidth}
     \begin{center}
-      \includegraphics[scale=.55]{4/lib/_data5/}
-      \caption{Face}
+      \includegraphics[scale=.065]{4/.report/_orig/p1.jpg}
+      \caption{Printouts_1}
+    \end{center}
+    \endminipage
+    \end{figure}
+    \begin{figure}[!htb]
+    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.2]{4/.report/_aligned/p1.jpg}
+      \caption{Aligned}
+    \end{center}
+    \endminipage
+    \end{figure}
+
+% -------------------------------------------------------
+\pagebreak
+    \begin{figure}[!htb]
+    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.065]{4/.report/_orig/p2.jpg}
+      \caption{Printouts_2}
+    \end{center}
+    \endminipage
+    \end{figure}
+    \begin{figure}[!htb]
+    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.2]{4/.report/_aligned/p2.jpg}
+      \caption{Aligned}
+    \end{center}
+    \endminipage
+    \end{figure}
+
+% -------------------------------------------------------
+\pagebreak
+    \begin{figure}[!htb]
+    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.25]{4/.report/_orig/s1.jpg}
+      \caption{Scanned1}
+    \end{center}
+    \endminipage
+    \end{figure}
+    \begin{figure}[!htb]
+    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.2]{4/.report/_aligned/s1.jpg}
+      \caption{Aligned}
+    \end{center}
+    \endminipage
+    \end{figure}
+
+% -------------------------------------------------------
+\pagebreak
+    \begin{figure}[!htb]
+    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.25]{4/.report/_orig/s2.jpg}
+      \caption{Scanned2}
+    \end{center}
+    \endminipage
+    \end{figure}
+    \begin{figure}[!htb]
+    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.2]{4/.report/_aligned/s2.jpg}
+      \caption{Aligned}
+    \end{center}
+    \endminipage
+    \end{figure}
+
+% -------------------------------------------------------
+\pagebreak
+    \begin{figure}[!htb]
+    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.25]{4/.report/_orig/b1.jpg}
+      \caption{Booklet1}
+    \end{center}
+    \endminipage
+    \end{figure}
+    \begin{figure}[!htb]
+    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.2]{4/.report/_aligned/b1.jpg}
+      \caption{Aligned}
+    \end{center}
+    \endminipage
+    \end{figure}
+
+% -------------------------------------------------------
+\pagebreak
+    \begin{figure}[!htb]
+    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.25]{4/.report/_orig/b2.jpg}
+      \caption{Booklet2}
+    \end{center}
+    \endminipage
+    \end{figure}
+    \begin{figure}[!htb]
+    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.2]{4/.report/_aligned/b2.jpg}
+      \caption{Aligned}
+    \end{center}
+    \endminipage
+    \end{figure}
+% -------------------------------------------------------
+% -------------------------------------------------------
+% Topic I
+    \pagebreak
+    \subsection*{Image Segmentation}
+% -------------------------------------------------------
+    I tried, various approaches for segmenting the text fields from the complete image. Of these various attempts, I obtained decent results via two approaches, described below.\\
+    \textbf{Contour Map}\\
+    I implemented \texttt{Canny-Edge Detection} on the aligned image, and carved out boxes of desired aspect-ratio to get the boxes. This approach did work, but wasn't complete, i.e. many boxes were left out.\\
+    \textbf{Predefined-Map}\\
+    Since, the image alignment procedure, tries to warp most of the boxes in the same position, majority of boxes have fixed coordinates. I, thus, worked on a single image and through various measures (contouring) came up with the ideal mask for that image, but that mask can now be applied to all the images. This made segmentation very fast as well as majorly complete! The mask is presented below.\\
+    Also, the results for both the procedures are presented below.
+% -------------------------------------------------------
+    
+    \begin{figure}[!htb]
+    \minipage{\textwidth}
+    \begin{center}
+        \includegraphics[scale=.25]{4/lib/best.png}
+      \caption{Mask}
     \end{center}
     \endminipage \hfill
     \end{figure}
-% -------------------------------------------------------    
-    \\[5pt]\textbf{Another example}\\
-    Here, I've smoothened the merge even further, by using different splines, each increasingly smoother.\\
-    This lead to increasing compatibility (or acceptability) of merge.\\[3pt]
 % -------------------------------------------------------
+\pagebreak\\
+\textbf{Contour Map}
     \begin{figure}[!htb]
     %
-    \minipage{0.45\textwidth}
+    \minipage{\textwidth}
     \begin{center}
-      \includegraphics[scale=.35]{./blending/ao/apple.png}
-      \caption{Apple}
+      \includegraphics[scale=.25]{4/.report/_segmented/_cont/s1.jpg}
+      \caption{Scanned1}
     \end{center}
-    \endminipage \hfill
+    \endminipage
+    \end{figure}
+    \begin{figure}[!htb]
     %
-    \minipage{0.45\textwidth}
+    \minipage{\textwidth}
     \begin{center}
-      \includegraphics[scale=.35]{./blending/ao/orange.png}
-      \caption{Orange}
-     \end{center}
-    \endminipage \hfill
-    %
+      \includegraphics[scale=.25]{4/.report/_segmented/_cont/s2.jpg}
+      \caption{Scanned2}
+    \end{center}
+    \endminipage
     \end{figure}
-
 % -------------------------------------------------------
-    \pagebreak
+\pagebreak\\
+\textbf{Contour Map}
+    \begin{figure}[!htb]
+    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.25]{4/.report/_segmented/_cont/p1.jpg}
+      \caption{Printout1}
+    \end{center}
+    \endminipage
+    \end{figure}
+    \begin{figure}[!htb]
+    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.25]{4/.report/_segmented/_cont/p2.jpg}
+      \caption{Printout2}
+    \end{center}
+    \endminipage
+    \end{figure}
 % -------------------------------------------------------
+\pagebreak \\
+\textbf{Contour Map}
     \begin{figure}[!htb]
-    \minipage{0.5\textwidth}
-      \fbox{\includegraphics[scale=.25]{./blending/ao/1.png}}
-      \caption{Merger}
-    \endminipage \hfill
     %
-    \minipage{0.5\textwidth}
-      \includegraphics[scale=.3]{./blending/ao/final_1.png}
-      \caption{Merge}
-    \endminipage \hfill
-    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.25]{4/.report/_segmented/_cont/b1.jpg}
+      \caption{Booklet1}
+    \end{center}
+    \endminipage
     \end{figure}
-
-% -------------------------------------------------------
-    
     \begin{figure}[!htb]
-    \minipage{0.5\textwidth}
-      \fbox{\includegraphics[scale=.25]{./blending/ao/2.png}}
-      \caption{Merger}
-    \endminipage \hfill
     %
-    \minipage{0.5\textwidth}
-      \includegraphics[scale=.3]{./blending/ao/final_2.png}
-      \caption{Merge}
-    \endminipage \hfill
-    %
-    \end{figure}
-
-% -------------------------------------------------------
-    \begin{figure}[!htb]
-    \minipage{0.5\textwidth}
-      \fbox{\includegraphics[scale=.25]{./blending/ao/3.png}}
-      \caption{Merger}
-    \endminipage \hfill
-    %
-    \minipage{0.5\textwidth}
-      \includegraphics[scale=.3]{./blending/ao/final_3.png}
-      \caption{Merge}
-    \endminipage \hfill
-    %
-    \end{figure}
-    
-% ------------------------------------------------------- 
-    \pagebreak
-    \textbf{Another example}
-    
-    \begin{figure}[!htb]
-    \minipage{0.5\textwidth}
-      \fbox{\includegraphics[scale=.20]{3/.report/blending/et/eye.png}}
-      \caption{Merger}
-    \endminipage \hfill
-    %
-    \minipage{0.5\textwidth}
-      \includegraphics[scale=.20]{3/.report/blending/et/hand.png}
-      \caption{Merge}
-    \endminipage \hfill
-    \end{figure}
-    
-    \begin{figure}[!htb]
-    \minipage{0.5\textwidth}
-      \fbox{\includegraphics[scale=.20]{3/.report/blending/et/mask.png}}
-      \caption{Merger}
-    \endminipage \hfill
-    %
-    \minipage{0.5\textwidth}
-      \includegraphics[scale=.20]{3/.report/blending/et/blend.png}
-      \caption{Merge}
-    \endminipage \hfill
-    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.25]{4/.report/_segmented/_cont/b2.jpg}
+      \caption{Booklet2}
+    \end{center}
+    \endminipage
     \end{figure}
 % ------------------------------------------------------- 
+% -------------------------------------------------------
+\pagebreak\\
+\textbf{Masked}
+    \begin{figure}[!htb]
+    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.25]{4/.report/_segmented/_mask/s1.jpg}
+      \caption{Scanned1}
+    \end{center}
+    \endminipage
+    \end{figure}
+    \begin{figure}[!htb]
+    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.25]{4/.report/_segmented/_mask/s2.jpg}
+      \caption{Scanned2}
+    \end{center}
+    \endminipage
+    \end{figure}
+% -------------------------------------------------------
+\pagebreak\\
+\textbf{Masked}
+    \begin{figure}[!htb]
+    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.25]{4/.report/_segmented/_mask/p1.jpg}
+      \caption{Printout1}
+    \end{center}
+    \endminipage
+    \end{figure}
+    \begin{figure}[!htb]
+    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.25]{4/.report/_segmented/_mask/p2.jpg}
+      \caption{Printout2}
+    \end{center}
+    \endminipage
+    \end{figure}
+% -------------------------------------------------------
+\pagebreak \\
+\textbf{Masked}
+    \begin{figure}[!htb]
+    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.25]{4/.report/_segmented/_mask/b1.jpg}
+      \caption{Booklet1}
+    \end{center}
+    \endminipage
+    \end{figure}
+    \begin{figure}[!htb]
+    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.25]{4/.report/_segmented/_mask/b2.jpg}
+      \caption{Booklet2}
+    \end{center}
+    \endminipage
+    \end{figure}
+% ------------------------------------------------------- 
+% ------------------------------------------------------- 
     \pagebreak
 % -------------------------------------------------------
-% Denoising
-    \subsection*{Denoising}
-    Since noise only adds to the detail of the image (not the approximation), we can very well reduce the noise in the image by working with the detail-levels in transforms and pyramids. Using this idea (usually with coefficient cutoff-thresholding), I tried to denoise some images. Results are presented below.\\[1pt]
-    
-    \textbf{Image}: Barbara  \textbf{Type}: Continuous (Real World Image)\\
-
+% Character Detection
+    \subsection*{Character detection}
+    Having segmented the image, using the latter approach (masking), it was fairly easy to do character detection using thresholding and then contouring the remaining characters.\\[1pt]
+    Note: The thresholding was binary, after adaptive histogram-equlisationn was applied to the aligned image. This allowed for faster and easier detection.\\
+    \textit{Bonus}: It was observed that median filtering the images led to removal of pre-printed slashes and thus they didn't appear in the detected character-set.\\
+    The results, including the detected characters and thresholding results are presented further.\\
+% -------------------------------------------------------
+% \pagebreak \\
+\textbf{Scanned1}
     \begin{figure}[!htb]
-    \minipage{0.45\textwidth}
-      \includegraphics[scale=0.4]{./denoising/b/b05.png}
-      \caption{Noisy Image}
-    \endminipage \hfill
-    \minipage{0.45\textwidth}
-      \includegraphics[scale=.4]{./denoising/b/p_1_0_013.png}
-      \caption{Pyramid Denoising}
-    \endminipage
-    \end{figure}\\
-    
-
-    \begin{figure}[!htb]
-    \minipage{0.45\textwidth}
-      \includegraphics[scale=0.4]{./denoising/b/hard0_15.png}
-      \caption{Hard Denoising}
-    \endminipage \hfill
-    \minipage{0.45\textwidth}
-      \includegraphics[scale=.4]{./denoising/b/smooth0_05.png}
-      \caption{Soft Denoising}
+    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.15]{4/.report/_thresh/s1.jpg}
+      \caption{Thresholded Image}
+    \end{center}
     \endminipage
     \end{figure}
-    \pagebreak
-
-%---------------------------------------------
-    
-    \pagebreak
-    \textbf{Image}: Shepplogan  \textbf{Type}: Discrete (Cartoon Image)\\
-    
     \begin{figure}[!htb]
-    \minipage{0.45\textwidth}
-      \includegraphics[scale=0.4]{./denoising/n/n05.png}
-      \caption{Noisy Image}
-    \endminipage \hfill
-    \minipage{0.45\textwidth}
-      \includegraphics[scale=.4]{./denoising/n/p_1_0_013.png}
-      \caption{Pyramid Denoising}
+    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.15]{4/.report/_char/s1.jpg}
+      \caption{Character Detection}
+    \end{center}
     \endminipage
     \end{figure}
-    
-
+% -------------------------------------------------------
+\pagebreak \\
+\textbf{Scanned2}
     \begin{figure}[!htb]
-    \minipage{0.45\textwidth}
-      \includegraphics[scale=0.4]{./denoising/n/hard0_05.png}
-      \caption{Hard Denoising}
-    \endminipage \hfill
-    \minipage{0.45\textwidth}
-      \includegraphics[scale=.4]{./denoising/n/smooth0_05.png}
-      \caption{Soft Denoising}
+    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.25]{4/.report/_thresh/s2.jpg}
+      \caption{Thresholded Image}
+    \end{center}
     \endminipage
     \end{figure}
-    
-    \textbf{Observation}\\
-    It was observed that the transform based denoising worked much better than thresholding using laplacian pyramids. Also, denoising worked much better in the case of discrete image, than continuous one. Also, though slight, there was a subtle difference between soft and hard denoising, with soft being more smooth (or acceptable).
-    
-    
-    \pagebreak
-
-%--------------------------------------------- 
-% Compression
-    \subsection*{Compression}
-    We can achieve (lossy) image compression by letting go of smaller detail-coefficients, with thresholding. This allows us to reduce the size, with some sacrifice to the image quality.
-    \\Also, we could now encode the image using run-length encoding as detail coefficients are very close to zero, and with cut-off, mostly zero. I tried compression with some images. Results are presented below.\\[2pt]
-    \textbf{Image}: Barbara  \textbf{Type}: Continuous (Real World Image)\\
     \begin{figure}[!htb]
-    \minipage{0.45\textwidth}
-      \includegraphics[scale=0.4]{./compression/1/20.png}
-      \caption{K = 20, Size = 154KB}
-    \endminipage \hfill
-    \minipage{0.45\textwidth}
-      \includegraphics[scale=.4]{./compression/1/50.png}
-      \caption{K = 50, Size = 29KB}
+    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.25]{4/.report/_char/s2.jpg}
+      \caption{Character Detection}
+    \end{center}
     \endminipage
     \end{figure}
-    
-
+% -------------------------------------------------------
+\pagebreak \\
+\textbf{Printout1}
     \begin{figure}[!htb]
-    \minipage{0.45\textwidth}
-      \includegraphics[scale=0.4]{./compression/1/80.png}
-      \caption{K = 80, Size = 15KB}
-    \endminipage \hfill
-    \minipage{0.45\textwidth}
-      \includegraphics[scale=.4]{./compression/plots/b.png}
-      \caption{Plot of binary-size vs. K}
+    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.25]{4/.report/_thresh/p1.jpg}
+      \caption{Thresholded Image}
+    \end{center}
     \endminipage
     \end{figure}
-    
-%------------------------------------
-    \pagebreak
-    \textbf{Image}: Shepplogan  \textbf{Type}: Discrete (Cartoon Image)\\
     \begin{figure}[!htb]
-    \minipage{0.45\textwidth}
-      \includegraphics[scale=0.4]{./compression/2/20.png}
-      \caption{K = 20, Size = 67KB}
-    \endminipage \hfill
-    \minipage{0.45\textwidth}
-      \includegraphics[scale=.4]{./compression/2/50.png}
-      \caption{K = 50, Size = 32KB}
+    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.25]{4/.report/_char/p1.jpg}
+      \caption{Character Detection}
+    \end{center}
     \endminipage
     \end{figure}
-    
-
+% -------------------------------------------------------
+\pagebreak \\
+\textbf{Printout2}
     \begin{figure}[!htb]
-    \minipage{0.45\textwidth}
-      \includegraphics[scale=0.4]{./compression/2/80.png}
-      \caption{K = 80, Size = 18KB}
-    \endminipage \hfill
-    \minipage{0.45\textwidth}
-      \includegraphics[scale=.4]{./compression/plots/c.png}
-      \caption{Plot of binary-size vs. K}
+    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.25]{4/.report/_thresh/p2.jpg}
+      \caption{Thresholded Image}
+    \end{center}
     \endminipage
     \end{figure}
-
-    \textbf{Observation}\\
-    I feel, nice compression ratios were achieved :)\\
-    Also, it was observed, that in the case of a continuous real world image, the compression increased phenomenally initially, and then slowed down as mostly coarse values remained. In the case of discrete image, instead, the starting value was already very small and the progression in compression was relatively slow, this maybe because most of the detail-coefficients are already small.
-    
-%--------------------------------------------- 
-\pagebreak
-%---------------------------------------------
-% Bonus
-\subsection*{Wavelets with Lifting Scheme}
-I implemented the wavelet-transform, as deescribed in the paper provided.\\
-This wavelet transform, is based on piece-wise linear approximation and wavelet functions. Unlike Haar-Transform, the transform focuses on linearity-correlation b/w contigious coefficients. This allows it to preserve linear variation very efficiently.\\
-Also, since the transform is bi-orthogonal, all the coefficients (approximating and detailing) were given the same weightage. This made denoising and compression very difficult. To counter that, I also implemented another form, where there is scaling b/w levels leading to better results, these are presented here.\\
-Another note (also an observation) is that Haar-Transform performs better than this transform on discrete (cartoon-type) images, because its key-functions are all constant functions. In the case of continuous images, the new transform performed much better.\\
-\subsubsection*{Denoising}
-
     \begin{figure}[!htb]
-    \minipage{0.45\textwidth}
-      \includegraphics[scale=0.4]{3/.report/denoising/bn/0_0_125000.jpg}
-      \caption{Continuous}
-    \endminipage \hfill
-    \minipage{0.45\textwidth}
-      \includegraphics[scale=.4]{3/.report/denoising/bn/0_0_097500.jpg}
-      \caption{Discrete}
+    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.25]{4/.report/_char/p2.jpg}
+      \caption{Character Detection}
+    \end{center}
     \endminipage
     \end{figure}
-
-\pagebreak
-\subsubsection*{Compression}
-
-    \textbf{Image}: Boat  \textbf{Type}: Continuous\\
+% -------------------------------------------------------
+\pagebreak \\
+\textbf{Booklet1}
     \begin{figure}[!htb]
-    \minipage{0.45\textwidth}
-      \includegraphics[scale=0.4]{3/.report/compression/3/15.png}
-      \caption{K = 15}
-    \endminipage \hfill
-    \minipage{0.45\textwidth}
-      \includegraphics[scale=.4]{./compression/3/50.png}
-      \caption{K = 50}
+    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.25]{4/.report/_thresh/b1.jpg}
+      \caption{Thresholded Image}
+    \end{center}
     \endminipage
     \end{figure}
-    
     \begin{figure}[!htb]
-    \minipage{0.45\textwidth}
-      \includegraphics[scale=0.4]{./compression/3/80.png}
-      \caption{K = 80}
-    \endminipage \hfill
-    \minipage{0.45\textwidth}
-      \includegraphics[scale=.4]{./compression/plots/bn.png}
-      \caption{Plot of binary-size vs. K}
+    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.25]{4/.report/_char/b1.jpg}
+      \caption{Character Detection}
+    \end{center}
     \endminipage
     \end{figure}
-    \\
-    \textbf{Comment}\\
-    Lifting-lazy scheme transform lost image clarity very early on, but still around smaller values of K, both image clarity and size were very well related (as good as jpeg).
-
+% -------------------------------------------------------
+\pagebreak \\
+\textbf{Booklet2}
+    \begin{figure}[!htb]
+    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.25]{4/.report/_thresh/b2.jpg}
+      \caption{Thresholded Image}
+    \end{center}
+    \endminipage
+    \end{figure}
+    \begin{figure}[!htb]
+    %
+    \minipage{\textwidth}
+    \begin{center}
+      \includegraphics[scale=.25]{4/.report/_char/b2.jpg}
+      \caption{Character Detection}
+    \end{center}
+    \endminipage
+    \end{figure}
 %--------------------------------------------- 
 \pagebreak
 %---------------------------------------------
 % Summary
 \subsection*{Summary}
-    This assignment was very interesting, and I learnt a lot of new things. What was discussed in class was very helpful. \\
+    This assignment was very interesting, and I learnt a lot of new things.
+    I really liked the idea of making this assignment open ended. As a direct practical application, we were very motivated to try all the possible things out and see how actually all methods we know of go around. \\
+    What was discussed in class was very helpful. \\
     Thanks and Regards\\
     Rajbir
 \end{document}
