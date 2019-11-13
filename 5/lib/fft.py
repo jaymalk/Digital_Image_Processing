@@ -45,7 +45,7 @@ def IFFT(_img: np.ndarray, _shft: bool = True) -> np.ndarray:
 
 
 # Padding function
-def __pad(_img: np.ndarray, _x: int, _y: int, _center: bool = True):
+def __pad(_img: np.ndarray, _x: int, _y: int, _center: bool = True, _cmplx: bool = False):
     # Centered Padding
     if _center:
         _x1 = _x//2
@@ -58,7 +58,12 @@ def __pad(_img: np.ndarray, _x: int, _y: int, _center: bool = True):
         _x2 = _x
         _y1 = 0
         _y2 = _y
-    _img_pad = cv.copyMakeBorder(_img, _x1, _x2, _y1, _y2, cv.BORDER_CONSTANT)
+    if _cmplx:
+        _imgr_pad = cv.copyMakeBorder(np.real(_img), _x1, _x2, _y1, _y2, cv.BORDER_CONSTANT)
+        _imgi_pad = cv.copyMakeBorder(np.imag(_img), _x1, _x2, _y1, _y2, cv.BORDER_CONSTANT)
+        _img_pad = _imgr_pad + _imgi_pad*1j
+    else:
+        _img_pad = cv.copyMakeBorder(_img, _x1, _x2, _y1, _y2, cv.BORDER_CONSTANT)
     return _img_pad
 
 # Converting a complex image (after IFFT), to uint8, with suitable changes
