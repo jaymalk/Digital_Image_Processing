@@ -119,7 +119,7 @@ def pyramids(_img: ArrayType, K: int, Q: int, _cvt: bool = True) -> List[List[Ar
     # LOOP
     for _ in range(K):
         # LOW-PASS
-        _LF = FFT(_low, _low.shape)
+        _lF = FFT(_low, _low.shape)
         # Layer list
         _layer = []
         # GETTING THE BANDS
@@ -127,11 +127,11 @@ def pyramids(_img: ArrayType, K: int, Q: int, _cvt: bool = True) -> List[List[Ar
         _H = high_pass(_low.shape)
         # GETTING THE ORIENTED FILTERS, LOOP
         for _i in range(Q):
-            _I = _LF*_G[_i]*_H
+            _I = _lF*_G[_i]*_H
             _layer.append(np.real(IFFT(_I)))
         # Low-passing further
         _L = low_pass(_low.shape)
-        _low = np.real(IFFT(_L*_LF))
+        _low = np.real(IFFT(_L*_lF))
         # Downsampling by 2
         _low = (_low[::2,::2] + _low[::2,1::2] + _low[1::2,::2] + _low[1::2,1::2])/4
         # Adding _layer to _pyramids
@@ -158,26 +158,26 @@ def recreate(_p: List[List[ArrayType]]) -> ArrayType:
         _low_up[::2,1::2] = _low
         _low_up[1::2,1::2] = _low
         # Going to Fourier Domain
-        _LF = FFT(_low_up, _low_up.shape)
+        _lF = FFT(_low_up, _low_up.shape)
         # Convolving with a low-pass band
-        _L = low_pass(_LF.shape)
-        _LF = _LF*_L
+        _L = low_pass(_lF.shape)
+        _lF = _lF*_L
         # Working with the oriented versions now
-        _G = oriented(_LF.shape, Q)
-        _H = high_pass(_LF.shape)
+        _G = oriented(_lF.shape, Q)
+        _H = high_pass(_lF.shape)
         # Looping over oriented filters
         for _j in range(Q):
             _I = FFT(_p[-_i-2][_j], _p[-_i-2][_j].shape) * _H * _G[_j]
-            _LF += _I
+            _lF += _I
         # Going back to spatial-domain
-        _low = np.real(IFFT(_LF))
+        _low = np.real(IFFT(_lF))
     # Now, finally processing the _low with _l0, and then adding _h0 processing high-pass
     _l0 = low_pass(_low.shape, 1/2)
-    _LF *= _l0
+    _lF *= _l0
     _h0 = high_pass(_low.shape, 1/2)
-    _HF = _h0 * _p[0][0]
+    _hF = _h0 * _p[0][0]
     # Adding the get the image back
-    _I = _LF + _HF
+    _I = _lF + _hF
     return np.real(IFFT(_I))
 
 
@@ -271,32 +271,32 @@ def pyramids_fast(_img: ArrayType, K: int, Q: int, _cvt: bool = True) -> List[Li
     _h0 = high_pass_fast(_img.shape, 1/2)
     _l0 = low_pass_fast(_img.shape, 1/2)
     # Getting image FFT
-    _IF = FFT(_img, _img.shape)
+    _iF = FFT(_img, _img.shape)
     # Storing the high-pass image
-    _p[0].append(np.real(IFFT(_IF*_h0)))
+    _p[0].append(np.real(IFFT(_iF*_h0)))
     # Starting with low-pass image
-    _LF = _IF*_l0
+    _lF = _iF*_l0
     # LOOP
     for _ in range(K):
         # Layer list
         _layer = []
         # GETTING THE BANDS
-        _G = oriented_fast(_LF.shape, Q)
-        _H = high_pass_fast(_LF.shape)
+        _G = oriented_fast(_lF.shape, Q)
+        _H = high_pass_fast(_lF.shape)
         # GETTING THE ORIENTED FILTERS, LOOP
         for _i in range(Q):
-            _I = _LF*_G[_i]*_H
+            _I = _lF*_G[_i]*_H
             _layer.append(np.real(IFFT(_I)))
         # Low-passing further
-        _L = low_pass_fast(_LF.shape)
-        _LF = _L*_LF
+        _L = low_pass_fast(_lF.shape)
+        _lF = _L*_lF
         # Downsampling by 2
         _m /= 2; _n /= 2
-        _LF = _LF[int(_m//2):int(_m+_m//2),int(_n//2):int(_n+_n//2)]
+        _lF = _lF[int(_m//2):int(_m+_m//2),int(_n//2):int(_n+_n//2)]
         # Adding _layer to _pyramids
         _p.append(_layer)
     # Adding the latest low to pyramids
-    _p.append([np.real(IFFT(_LF))])
+    _p.append([np.real(IFFT(_lF))])
     # Returning the pyramids
     return _p
 
@@ -305,30 +305,30 @@ def recreate_fast(_p: List[List[ArrayType]]) -> ArrayType:
     K = len(_p)-2; assert(K > 0)    # Atleast 1-scale in the image
     Q = len(_p[1])
     # Getting the first low-scale
-    _LF = FFT(_p[-1][0], _p[-1][0].shape)
+    _lF = FFT(_p[-1][0], _p[-1][0].shape)
     # LOOP, with oriented versions
     for _i in range(K):
         # Up-sampling the present LOW
-        _m, _n = _LF.shape[0], _LF.shape[1]
-        _LFU = np.zeros((_m*2, _n*2), dtype=complex)
-        _LFU[int(_m//2):int(_m+_m//2),int(_n//2):int(_n+_n//2)] = _LF
+        _m, _n = _lF.shape[0], _lF.shape[1]
+        _lFU = np.zeros((_m*2, _n*2), dtype=complex)
+        _lFU[int(_m//2):int(_m+_m//2),int(_n//2):int(_n+_n//2)] = _lF
         # Resize
-        _LF = _LFU
+        _lF = _lFU
         # Convolving with a low-pass band
-        _L = low_pass_fast(_LF.shape)
-        _LF = _LF*_L
+        _L = low_pass_fast(_lF.shape)
+        _lF = _lF*_L
         # Working with the oriented versions now
-        _G = oriented_fast(_LF.shape, Q)
-        _H = high_pass_fast(_LF.shape)
+        _G = oriented_fast(_lF.shape, Q)
+        _H = high_pass_fast(_lF.shape)
         # Looping over oriented filters
         for _j in range(Q):
             _I = FFT(_p[-_i-2][_j], _p[-_i-2][_j].shape) * _H * _G[_j]
-            _LF += _I
+            _lF += _I
     # Now, finally processing the _low with _l0, and then adding _h0 processing high-pass
-    _l0 = low_pass_fast(_LF.shape, 1/2)
-    _LF *= _l0
-    _h0 = high_pass_fast(_LF.shape, 1/2)
-    _HF = _h0 * _p[0][0]
+    _l0 = low_pass_fast(_lF.shape, 1/2)
+    _lF *= _l0
+    _h0 = high_pass_fast(_lF.shape, 1/2)
+    _hF = _h0 * _p[0][0]
     # Adding the get the image back
-    _I = _LF + _HF
+    _I = _lF + _hF
     return np.real(IFFT(_I))

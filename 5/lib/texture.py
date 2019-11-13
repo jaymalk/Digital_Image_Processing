@@ -11,11 +11,11 @@ from histogram import *
 from fft import *
 
 # Texture synthesis using steerable pyramids
-def texture_synthesis_steerable(_img: ArrayType, K: int, Q: int, _iter: int = 5) -> ArrayType:
+def texture_synthesis_steerable(_img: ArrayType, K: int, Q: int, _iter: int = 5, _shp: Tuple[int, int] = None) -> ArrayType:
     # Creating image steerable pyramids
     _p = pyramids_fast(_img, K, Q, _cvt=False)
     # Creating the noise
-    _n = np.random.normal(0.5, 0.4, _img.shape)
+    _n = np.random.normal(0.5, 0.4, _img.shape) if _shp == None else np.random.normal(0.5, 0.4, _shp)
     # Matching the histogram
     _n = match_hist(_n, _img)
     # Loop
@@ -35,5 +35,7 @@ def texture_synthesis_steerable(_img: ArrayType, K: int, Q: int, _iter: int = 5)
         _n = recreate_fast(_pn)
         # Matching the histograms
         _n = match_hist(_n, _img)
+        # Writing
+        write(f'iter_{_}.png', _n*255)
     # Return the image
     return _n
